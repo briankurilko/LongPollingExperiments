@@ -18,7 +18,6 @@ export default function Talks({ name }) {
     form.reset;
   }
 
-  // I think I'm sending the tag incorrectly.
   async function pollTalks() {
     let tag = undefined;
     for (;;) {
@@ -64,7 +63,7 @@ export default function Talks({ name }) {
                 <strong>{comment.author}</strong>: {comment.message}
               </p>
             ))}
-            <form onSubmit={submitComment}>
+            <form onSubmit={(event) => submitComment(event, talk.title)}>
               <input type="text" name="comment" />{" "}
               <button type="submit">Add comment</button>
             </form>

@@ -2,7 +2,6 @@ package com.skillshare.demo.config;
 
 import com.skillshare.demo.CustomExceptionHandler;
 import com.skillshare.demo.SkillShareServiceAtomicReferenceImpl;
-import com.skillshare.demo.SkillShareServiceNoDbImpl;
 import com.skillshare.demo.api.SkillShareService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +11,7 @@ public class SkillShareConfig {
 
     @Bean
     public SkillShareService skillShareService() {
-        return new SkillShareServiceNoDbImpl();
+        return new SkillShareServiceAtomicReferenceImpl();
     }
 
     @Bean

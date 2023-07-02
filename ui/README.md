@@ -2,3 +2,5 @@ Project structure designed from this blog: https://levelup.gitconnected.com/free
 
 
 This proxies to the backend with devserverproxy from webpack: https://webpack.js.org/configuration/dev-server/#devserverproxy
+
+TODO: get dev server to show unminified code when looking at source in browser.
