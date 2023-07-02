@@ -15,7 +15,7 @@ export default function Talks({ name }) {
       author: name,
       message: form.elements.comment.value,
     });
-    form.reset;
+    form.reset();
   }
 
   async function pollTalks() {
