@@ -129,10 +129,10 @@ public class SkillShareServiceNoDbImpl implements SkillShareService {
     }
 
     private ResponseEntity<List<Talk>> talkResponse() {
-        List<Talk> talksList = new ArrayList<>();
+        List<Talk> talksList;
         MultiValueMap<String, String> headers = new HttpHeaders();
         synchronized (this) {
-            talksList.addAll(talks.values());
+            talksList = new ArrayList<>(talks.values());
             headers.add("Content-Type", "application/json");
             headers.add("ETag", String.valueOf(version));
             headers.add("Cache-Control", "no-store");

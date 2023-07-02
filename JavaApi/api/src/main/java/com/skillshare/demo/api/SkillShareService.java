@@ -15,7 +15,7 @@ public interface SkillShareService {
     ResponseEntity<Talk> getTalk(@PathVariable String topic);
 
     @GetMapping
-    ResponseEntity<List<Talk>> pollAllTalks(@RequestHeader(value = "If-None-Match", required = false) String tag, @RequestHeader(value = "Prefer", required = false) String wait) throws InterruptedException;
+    ResponseEntity<List<Talk>> pollAllTalks(@RequestHeader(value = "If-None-Match", required = false) String tag, @RequestHeader(value = "Prefer", required = false) String wait) throws Exception;
 
     @PutMapping("/{topic}")
     ResponseEntity<Void> addNewTalk(@PathVariable String topic, @RequestBody Talk talk);

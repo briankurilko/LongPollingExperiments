@@ -21,7 +21,7 @@ public class SkillShareServiceAtomicReferenceImpl implements SkillShareService {
 
     private final AtomicReference<Talks> talks; //try atomic stamped reference, maybe
     private final ScheduledExecutorService executor;
-    private final List<CountDownLatch> work;
+    private final List<CompletableFuture<ResponseEntity<List<Talk>>>> work;
 
     private static final Pattern WAIT_REGEX = Pattern.compile("\\bwait=(\\d+)");
 
@@ -42,7 +42,7 @@ public class SkillShareServiceAtomicReferenceImpl implements SkillShareService {
     }
 
     @Override
-    public ResponseEntity<List<Talk>> pollAllTalks(String tag, String wait) throws InterruptedException {
+    public ResponseEntity<List<Talk>> pollAllTalks(String tag, String wait) throws Exception {
         Integer waitTime = null;
         if (wait != null) {
             Matcher matcher = WAIT_REGEX.matcher(wait);
@@ -148,28 +148,22 @@ public class SkillShareServiceAtomicReferenceImpl implements SkillShareService {
         headers.add("ETag", String.valueOf(currentTalks.getVersion()));
         headers.add("Cache-Control", "no-store");
 
-
         return new ResponseEntity<>(talksList, headers, HttpStatus.OK);
     }
 
-    private ResponseEntity<List<Talk>> waitForChange(Integer waitTime) throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
-        work.add(latch);
-        AtomicBoolean timedOut = new AtomicBoolean(false);
+    private ResponseEntity<List<Talk>> waitForChange(Integer waitTime) throws Exception {
+        CompletableFuture<ResponseEntity<List<Talk>>> completableFuture = new CompletableFuture<>();
+        work.add(completableFuture);
         executor.schedule(() -> {
-            work.remove(latch);
-            timedOut.set(true);
-            latch.countDown();
+            work.remove(completableFuture);
+            completableFuture.complete(new ResponseEntity<>(null, null, HttpStatus.NOT_MODIFIED));
         }, waitTime, TimeUnit.SECONDS);
-        latch.await();
-        if (timedOut.get()) {
-            return new ResponseEntity<>(null, null, HttpStatus.NOT_MODIFIED);
-        }
-        return talkResponse();
+        return completableFuture.get();
     }
 
     private void updated() {
-        work.forEach(CountDownLatch::countDown);
+        ResponseEntity<List<Talk>> response = this.talkResponse();
+        work.forEach(completableFuture -> completableFuture.complete(response));
         work.clear();
     }
 }
