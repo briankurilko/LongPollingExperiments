@@ -5,7 +5,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use("/talk", router);
+app.use("/talks", router);
 
 const server = app.listen(8080, () => {
   const host = server.address().address;
